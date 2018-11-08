@@ -1,75 +1,108 @@
 <template>
-  <div>
-    <el-form ref="form" :model="form" label-width="80px">
-  <el-form-item label="活动名称">
-    <el-input v-model="form.name"></el-input>
+  <div class='login'>
+    <!-- 是通过form来管理数据的 传入一个对象
+         el-form是组件  在页面标签中自动生成el-form类名
+         ref 可以获取到dom对象 或者组件
+     -->
+<el-form ref="form" :model="form" :rules="rules" label-width="80px" status-icon>
+  <img src="../assets/avatar.jpg" alt="">
+  <el-form-item label="用户名" prop='username'>
+    <el-input v-model="form.username" placeholder="请输入用户名"></el-input>
   </el-form-item>
-  <el-form-item label="活动区域">
-    <el-select v-model="form.region" placeholder="请选择活动区域">
-      <el-option label="区域一" value="shanghai"></el-option>
-      <el-option label="区域二" value="beijing"></el-option>
-    </el-select>
-  </el-form-item>
-  <el-form-item label="活动时间">
-    <el-col :span="11">
-      <el-date-picker type="date" placeholder="选择日期" v-model="form.date1" style="width: 100%;"></el-date-picker>
-    </el-col>
-    <el-col class="line" :span="2">-</el-col>
-    <el-col :span="11">
-      <el-time-picker type="fixed-time" placeholder="选择时间" v-model="form.date2" style="width: 100%;"></el-time-picker>
-    </el-col>
-  </el-form-item>
-  <el-form-item label="即时配送">
-    <el-switch v-model="form.delivery"></el-switch>
-  </el-form-item>
-  <el-form-item label="活动性质">
-    <el-checkbox-group v-model="form.type">
-      <el-checkbox label="美食/餐厅线上活动" name="type"></el-checkbox>
-      <el-checkbox label="地推活动" name="type"></el-checkbox>
-      <el-checkbox label="线下主题活动" name="type"></el-checkbox>
-      <el-checkbox label="单纯品牌曝光" name="type"></el-checkbox>
-    </el-checkbox-group>
-  </el-form-item>
-  <el-form-item label="特殊资源">
-    <el-radio-group v-model="form.resource">
-      <el-radio label="线上品牌商赞助"></el-radio>
-      <el-radio label="线下场地免费"></el-radio>
-    </el-radio-group>
-  </el-form-item>
-  <el-form-item label="活动形式">
-    <el-input type="textarea" v-model="form.desc"></el-input>
+  <el-form-item label="密码" prop='password'>
+    <el-input v-model="form.password" placeholder="请输入密码" type='password'></el-input>
   </el-form-item>
   <el-form-item>
-    <el-button type="primary" @click="onSubmit">立即创建</el-button>
-    <el-button>取消</el-button>
+    <el-button type="primary" @click="submitForm">登陆</el-button>
+    <el-button @click='resetForm'>重置</el-button>
   </el-form-item>
 </el-form>
   </div>
 </template>
 
 <script>
+// 引入axios
+import axios from 'axios'
 export default {
   data() {
     return {
       form: {
-        name: '',
-        region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: ''
+        username: '',
+        password: ''
+      },
+      // 表单效验的规则
+      rules: {
+        username: [
+          { required: true, message: '请输入用户名', trigger: 'change' },
+          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'change' }
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'change' },
+          {
+            min: 6,
+            max: 12,
+            message: '长度在 6 到 12 个字符',
+            trigger: 'change'
+          }
+        ]
       }
     }
   },
   methods: {
-    onSubmit() {
-      console.log('submit!')
+    resetForm() {
+      this.$refs.form.resetFields()
+    },
+    submitForm() {
+      this.$refs.form.validate(valid => {
+        // 效验看是否成功 成功为true 失败为false
+        if (valid) {
+          // 表示效验成功,发送ajax请求
+          axios
+            .post('http://localhost:8888/api/private/v1/login', this.form)
+            .then(res => {
+              if (res.data.meta.status === 200) {
+                this.$message.success('登陆成功')
+                // 将token存储到localStorage.setItem ,这个必须放在跳转之前 不然通不过路由守卫
+                localStorage.setItem('token', res.data.data.token)
+                // 验证成功，跳到首页
+                this.$router.push('/home')
+              } else {
+                // 验证不通过 弹出消息框
+                this.$message.error(res.data.meta.msg)
+              }
+            })
+        } else {
+          console.log('没通过')
+        }
+      })
     }
   }
 }
 </script>
 
-<style>
+<style lang='less' scoped>
+.login {
+  height: 100%;
+  background-color: #2d434c;
+  overflow: hidden;
+  .el-form {
+    width: 400px;
+    background: #fff;
+    margin: 200px auto;
+    padding: 70px 40px 15px;
+    position: relative;
+    border-radius: 20px;
+    img {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: -80px;
+      border: 10px solid #fff;
+      border-radius: 50%;
+    }
+    .el-button:nth-child(2) {
+      margin-left: 80px;
+    }
+  }
+}
 </style>
