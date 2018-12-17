@@ -10,7 +10,7 @@
     <el-input v-model="form.username" placeholder="请输入用户名"></el-input>
   </el-form-item>
   <el-form-item label="密码" prop='password'>
-    <el-input v-model="form.password" placeholder="请输入密码" type='password'></el-input>
+    <el-input v-model="form.password" placeholder="请输入密码" type='password' @keyup.enter.native='submitForm'></el-input>
   </el-form-item>
   <el-form-item>
     <el-button type="primary" @click="submitForm">登陆</el-button>
@@ -21,8 +21,6 @@
 </template>
 
 <script>
-// 引入axios
-import axios from 'axios'
 export default {
   data() {
     return {
@@ -57,18 +55,18 @@ export default {
         // 效验看是否成功 成功为true 失败为false
         if (valid) {
           // 表示效验成功,发送ajax请求
-          axios
+          this.axios
             .post('http://localhost:8888/api/private/v1/login', this.form)
             .then(res => {
-              if (res.data.meta.status === 200) {
+              if (res.meta.status === 200) {
                 this.$message.success('登陆成功')
                 // 将token存储到localStorage.setItem ,这个必须放在跳转之前 不然通不过路由守卫
-                localStorage.setItem('token', res.data.data.token)
+                localStorage.setItem('token', res.data.token)
                 // 验证成功，跳到首页
                 this.$router.push('/home')
               } else {
                 // 验证不通过 弹出消息框
-                this.$message.error(res.data.meta.msg)
+                this.$message.error(res.meta.msg)
               }
             })
         } else {

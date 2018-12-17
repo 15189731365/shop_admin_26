@@ -5,6 +5,18 @@ import Router from 'vue-router'
 import Login from '@/components/Login.vue'
 // 导入Home组件
 import Home from '@/components/Home.vue'
+// 导入Users组件
+import Users from '@/components/Users.vue'
+// 导入Rights组将
+import Rights from '@/components/Rights.vue'
+// 导入Roles组将
+import Roles from '@/components/Roles.vue'
+// 导入Categories组将
+import Categories from '@/components/Categories.vue'
+// 导入goods组件
+import Goods from '@/components/Goods.vue'
+// 导入goods-add组件
+import Goodsadd from '@/components/Goods-add'
 
 Vue.use(Router)
 
@@ -20,7 +32,33 @@ const router = new Router({
     },
     {
       path: '/home',
-      component: Home
+      component: Home,
+      children: [
+        {
+          path: '/users',
+          component: Users
+        },
+        {
+          path: '/rights',
+          component: Rights
+        },
+        {
+          path: '/roles',
+          component: Roles
+        },
+        {
+          path: '/categories',
+          component: Categories
+        },
+        {
+          path: '/goods',
+          component: Goods
+        },
+        {
+          path: '/goods-add',
+          component: Goodsadd
+        }
+      ]
     }
   ]
 })
@@ -32,7 +70,7 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
   if (to.path === '/login' || token) {
-    // 表示有token 那么就放行
+    // 表示有token或者去登陆页面的时候 就放行
     next()
   } else {
     // 没有token 那么就跳转到登陆页

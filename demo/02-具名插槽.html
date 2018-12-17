@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <div id="app">
+      <home>
+        <template slot="title"
+          >这是一段文本</template
+        >
+        <template slot="info"
+          >这是二段文本</template
+        >
+        <template slot="btn"
+          >这是三段文本</template
+        >
+      </home>
+    </div>
+
+    <script src="vue.js"></script>
+    <script>
+      Vue.component('home', {
+        template: `
+                                  <div>
+                                    <h3> <slot name='title'>标题</slot></h3>
+                                    <div><slot name='info'>哈哈</slot></div>
+                                    <button><slot name='btn'>按钮</slot></button>
+                                  </div>
+                                `
+      })
+      const vm = new Vue({
+        el: '#app',
+        data: {
+          msg: 'hello vue'
+        }
+      })
+    </script>
+  </body>
+</html>

@@ -10,3 +10,7 @@ body {
 #app {
   height: 100%;
 }
+.el-breadcrumb {
+  height: 30px;
+  line-height: 30px;
+}

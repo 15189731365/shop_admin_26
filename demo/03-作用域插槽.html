@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <div id="app">
+      <home>
+        <template slot-scope="scope">
+          <div>今年{{ scope.age }}岁</div>
+          <ul>
+            <li v-for="item in scope.list">{{ item }}</li>
+          </ul>
+        </template>
+      </home>
+    </div>
+
+    <script src="vue.js"></script>
+    <script>
+      Vue.component('home', {
+        template: `
+                    <div>
+                          <h1>标题</h1>
+                          <slot :age='age' :list='list'></slot>
+                    </div>
+                        `,
+        data() {
+          return {
+            age: 18,
+            list: ['麦蒂', '科比', '艾弗森']
+          }
+        }
+      })
+      const vm = new Vue({
+        el: '#app',
+        data: {
+          msg: 'hello vue'
+        }
+      })
+    </script>
+  </body>
+</html>
